@@ -64,5 +64,7 @@ class ContinuousIntegrationServerTest {
                 responseWriter.toString().contains("404"),
                 () -> "Expected response to contain '404' but got: " + responseWriter);
     }
+
+
 }
 

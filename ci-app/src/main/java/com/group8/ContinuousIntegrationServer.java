@@ -5,10 +5,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.stream.Collectors;
 
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.json.JSONObject;
 
 /**
  * ContinuousIntegrationServer acts as a simple webhook endpoint.
@@ -38,10 +40,39 @@ public class ContinuousIntegrationServer extends AbstractHandler {
             if ("GET".equalsIgnoreCase(method) && "/".equals(path)) {
                 response.setStatus(HttpServletResponse.SC_OK);
                 writer.println("CI Server is up and running");
-            } else {
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                writer.println("404 Not Found");
+                return;
             }
+            if ("POST".equalsIgnoreCase(method) && "/webhook".equals(path)) {
+                try {
+                    // 1. Body
+                    String body = request.getReader().lines().collect(Collectors.joining("\n"));
+
+                    // 2. parse JSON
+                    JSONObject payload = new JSONObject(body);
+                    String ref = payload.optString("ref", "");
+
+                    System.out.println("Incoming push on ref: " + ref);
+
+                    // 3. check branch
+                    if ("refs/heads/assessment".equals(ref)) {
+                        System.out.println("Assessment branch detected! Triggering CI process...");
+                        // TODO: mvn compile
+                        response.setStatus(HttpServletResponse.SC_OK);
+                        writer.println("CI started for assessment branch.");
+                    } else {
+                        System.out.println("Not an assessment branch. Ignore.");
+                        response.setStatus(HttpServletResponse.SC_OK);
+                        writer.println("Not assessment branch, nothing to do.");
+                    }
+                } catch (Exception e) {
+                    System.err.println("Failed to process webhook: " + e.getMessage());
+                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    writer.println("Error parsing JSON");
+                }
+                return;
+            }
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            writer.println("404 Not Found");
         }
 
         // TODO: plug in CI logic here:
