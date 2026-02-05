@@ -1,9 +1,9 @@
-// Completed, Failure, In Progress, Pending
+
 
 public enum CommitStatus {
-    SUCCESS("success"),
-    FAILURE("failure"),
-    PENDING("pending");
+    SUCCESS("success"), // latest status for all contexts is success
+    FAILURE("failure"), // any contexts report error or failure
+    PENDING("pending"); // no statuses or context is pending
 
     private final String status;
 
