@@ -11,9 +11,10 @@ import java.io.StringWriter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.example.ContinuousIntegrationServer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import com.group8.ContinuousIntegrationServer;
 
 class ContinuousIntegrationServerTest {
 

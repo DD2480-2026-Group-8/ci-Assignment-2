@@ -1,4 +1,4 @@
-package org.example;
+package com.group8;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
