@@ -15,8 +15,9 @@ FROM eclipse-temurin:25-jre
 
 WORKDIR /app
 
-# Copy the JAR from build stage
-COPY --from=build /build/target/*.jar app.jar
+# Copy the shaded (fat) JAR from build stage
+# The shade plugin creates a -shaded.jar with all dependencies and the Main-Class set.
+COPY --from=build /build/target/*-shaded.jar app.jar
 
 # Expose port 8080 (internal container port)
 EXPOSE 8080
