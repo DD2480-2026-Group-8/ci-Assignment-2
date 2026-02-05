@@ -3,11 +3,15 @@
 public enum CommitStatus {
     SUCCESS("success"),
     FAILURE("failure"),
-    IN_PROGRESS("in progress");
+    PENDING("pending");
 
     private final String status;
 
     CommitStatus(String status) {
         this.status = status;
+    }
+
+    public String getStatus() {
+        return status;
     }
 }
