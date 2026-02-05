@@ -1,4 +1,4 @@
-package org.example;
+package com.group8;
 
 /**
  * Simple entry point kept only to avoid IntelliJ warnings.
