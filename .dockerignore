@@ -1,0 +1,30 @@
+# Git files
+.git
+.gitignore
+
+# IDE files
+.idea
+*.iml
+.vscode
+
+# Build artifacts (will be rebuilt in container)
+ci-app/target/
+*.class
+*.jar
+*.war
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Documentation
+README.md
+*.md
+
+# Docker files (no need to copy into image)
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Test files
+ci-app/src/test/
