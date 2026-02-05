@@ -65,6 +65,52 @@ class ContinuousIntegrationServerTest {
                 () -> "Expected response to contain '404' but got: " + responseWriter);
     }
 
+    private String loadResource(String path) throws Exception {
+        try (var is = getClass().getClassLoader().getResourceAsStream(path)) {
+            assert is != null : "Test resource not found: " + path;
+            return new String(is.readAllBytes());
+        }
+    }
+    @Test
+    void testAssessmentBranchTriggersCI() throws Exception {
+        String payload = loadResource("webhook/push-assessment.json");
+
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getReader()).thenReturn(
+                new java.io.BufferedReader(new java.io.StringReader(payload))
+        );
+        when(request.getRequestURI()).thenReturn("/webhook");
+
+        ciServer.handle("/", null, request, response);
+
+        verify(response).setStatus(HttpServletResponse.SC_OK);
+
+        assertTrue(
+                responseWriter.toString().toLowerCase().contains("assessment"),
+                () -> "Expected assessment branch handling, but got: " + responseWriter
+        );
+    }
+
+    @Test
+    void testNonAssessmentBranchIsIgnored() throws Exception {
+        String payload = loadResource("webhook/push-not-assessment.json");
+
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getReader()).thenReturn(
+                new java.io.BufferedReader(new java.io.StringReader(payload))
+        );
+        when(request.getRequestURI()).thenReturn("/webhook");
+
+        ciServer.handle("/", null, request, response);
+
+        verify(response).setStatus(HttpServletResponse.SC_OK);
+
+        assertTrue(
+                responseWriter.toString().toLowerCase().contains("ignore")
+                        || responseWriter.toString().toLowerCase().contains("not assessment"),
+                () -> "Expected non-assessment branch to be ignored, but got: " + responseWriter
+        );
+    }
 
 }
 
