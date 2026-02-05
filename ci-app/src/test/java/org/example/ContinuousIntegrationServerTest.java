@@ -1,50 +1,65 @@
 package org.example;
 
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ContinuousIntegrationServerTest {
 
+    private ContinuousIntegrationServer ciServer;
+    private HttpServletRequest request;
+    private HttpServletResponse response;
+    private StringWriter responseWriter;
+
+    @BeforeEach
+    void setUp() throws Exception {
+        ciServer = new ContinuousIntegrationServer();
+        request = mock(HttpServletRequest.class);
+        response = mock(HttpServletResponse.class);
+        responseWriter = new StringWriter();
+
+        when(response.getWriter()).thenReturn(new PrintWriter(responseWriter));
+    }
+
+    /**
+     * Test that the server responds with 200 OK and a friendly message on the root path.
+     */
     @Test
-    void rootRequestReturnsCiJobDone() throws Exception {
-        Server server = new Server(0); // 0 = pick a free port
-        server.setHandler(new ContinuousIntegrationServer());
+    void testHandleIndex() throws Exception {
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getRequestURI()).thenReturn("/");
 
-        try {
-            server.start();
+        ciServer.handle("/", null, request, response);
 
-            int port = ((ServerConnector) server.getConnectors()[0]).getLocalPort();
-            URL url = new URL("http://localhost:" + port + "/");
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
+        verify(response).setStatus(HttpServletResponse.SC_OK);
+        assertTrue(
+                responseWriter.toString().contains("CI Server is up and running"),
+                () -> "Expected response to contain 'CI Server is up and running' but got: " + responseWriter);
+    }
 
-            int status = connection.getResponseCode();
-            assertEquals(200, status);
+    /**
+     * Test that the server responds with 404 when an unknown path is requested.
+     */
+    @Test
+    void testHandleNotFound() throws Exception {
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getRequestURI()).thenReturn("/invalid");
 
-            try (BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
-                StringBuilder body = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    if (body.length() > 0) {
-                        body.append('\n');
-                    }
-                    body.append(line);
-                }
-                assertEquals("CI job done", body.toString());
-            }
-        } finally {
-            server.stop();
-        }
+        ciServer.handle("/invalid", null, request, response);
+
+        verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);
+        assertTrue(
+                responseWriter.toString().contains("404"),
+                () -> "Expected response to contain '404' but got: " + responseWriter);
     }
 }
 
