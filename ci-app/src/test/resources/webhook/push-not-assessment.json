@@ -1,7 +1,7 @@
 {
-  "ref": "refs/heads/assessment",
+  "ref": "refs/heads/feat/receive-webhook",
   "before": "0000000000000000000000000000000000000000",
-  "after": "fc927b09f7ef35daf466baa1051fa4a662f71989",
+  "after": "91fa04b71806ad460860619465721cb5547fc8a0",
   "repository": {
     "id": 1145250449,
     "node_id": "R_kgDOREMikQ",
@@ -73,7 +73,7 @@
     "deployments_url": "https://api.github.com/repos/DD2480-2026-Group-8/ci-Assignment-2/deployments",
     "created_at": 1769701823,
     "updated_at": "2026-02-05T13:56:37Z",
-    "pushed_at": 1770319286,
+    "pushed_at": 1770319115,
     "git_url": "git://github.com/DD2480-2026-Group-8/ci-Assignment-2.git",
     "ssh_url": "git@github.com:DD2480-2026-Group-8/ci-Assignment-2.git",
     "clone_url": "https://github.com/DD2480-2026-Group-8/ci-Assignment-2.git",
@@ -151,32 +151,80 @@
   },
   "created": true,
   "deleted": false,
-  "base_ref": "refs/heads/lz-test-commit",
-  "compare": "https://github.com/DD2480-2026-Group-8/ci-Assignment-2/compare/assessment",
-  "commits": [],
+  "base_ref": null,
+  "compare": "https://github.com/DD2480-2026-Group-8/ci-Assignment-2/commit/91fa04b71806",
+  "commits": [
+    {
+      "id": "91fa04b71806ad460860619465721cb5547fc8a0",
+      "tree_id": "b61efb0399dcc9be66aa72599642508544d59c9f",
+      "distinct": true,
+      "message": "feat: receive post from webhook and parse it\n\nadd tests",
+      "timestamp": "2026-02-05T20:18:20+01:00",
+      "url": "https://github.com/DD2480-2026-Group-8/ci-Assignment-2/commit/91fa04b71806ad460860619465721cb5547fc8a0",
+      "author": {
+        "name": "JingzeGuo",
+        "email": "jingzekuo@gmail.com",
+        "date": "2026-02-05T20:18:20+01:00",
+        "username": "JingzeGuo"
+      },
+      "committer": {
+        "name": "JingzeGuo",
+        "email": "jingzekuo@gmail.com",
+        "date": "2026-02-05T20:18:20+01:00",
+        "username": "JingzeGuo"
+      },
+      "added": [
+        ".idea/.gitignore",
+        ".idea/encodings.xml",
+        ".idea/misc.xml",
+        ".idea/vcs.xml",
+        "ci-app/.idea/compiler.xml",
+        "ci-app/.idea/jarRepositories.xml",
+        "ci-app/src/test/resources/webhook/push-assessment.json",
+        "ci-app/src/test/resources/webhook/push-main.json"
+      ],
+      "removed": [],
+      "modified": [
+        "ci-app/pom.xml",
+        "ci-app/src/main/java/com/group8/ContinuousIntegrationServer.java",
+        "ci-app/src/test/java/com/group8/ContinuousIntegrationServerTest.java"
+      ]
+    }
+  ],
   "head_commit": {
-    "id": "fc927b09f7ef35daf466baa1051fa4a662f71989",
-    "tree_id": "427dfc8ba4e71ee1f4cb123029033b10cd6fcf96",
+    "id": "91fa04b71806ad460860619465721cb5547fc8a0",
+    "tree_id": "b61efb0399dcc9be66aa72599642508544d59c9f",
     "distinct": true,
-    "message": "chore: update groupId changed path name (#22)",
-    "timestamp": "2026-02-05T14:56:29+01:00",
-    "url": "https://github.com/DD2480-2026-Group-8/ci-Assignment-2/commit/fc927b09f7ef35daf466baa1051fa4a662f71989",
+    "message": "feat: receive post from webhook and parse it\n\nadd tests",
+    "timestamp": "2026-02-05T20:18:20+01:00",
+    "url": "https://github.com/DD2480-2026-Group-8/ci-Assignment-2/commit/91fa04b71806ad460860619465721cb5547fc8a0",
     "author": {
-      "name": "Filip Dimitrijević",
-      "email": "filipdim97@gmail.com",
-      "date": "2026-02-05T14:56:29+01:00",
-      "username": "FilipDimitrijevic97"
+      "name": "JingzeGuo",
+      "email": "jingzekuo@gmail.com",
+      "date": "2026-02-05T20:18:20+01:00",
+      "username": "JingzeGuo"
     },
     "committer": {
-      "name": "GitHub",
-      "email": "noreply@github.com",
-      "date": "2026-02-05T14:56:29+01:00",
-      "username": "web-flow"
+      "name": "JingzeGuo",
+      "email": "jingzekuo@gmail.com",
+      "date": "2026-02-05T20:18:20+01:00",
+      "username": "JingzeGuo"
     },
-    "added": [],
+    "added": [
+      ".idea/.gitignore",
+      ".idea/encodings.xml",
+      ".idea/misc.xml",
+      ".idea/vcs.xml",
+      "ci-app/.idea/compiler.xml",
+      "ci-app/.idea/jarRepositories.xml",
+      "ci-app/src/test/resources/webhook/push-assessment.json",
+      "ci-app/src/test/resources/webhook/push-main.json"
+    ],
     "removed": [],
     "modified": [
-      "ci-app/pom.xml"
+      "ci-app/pom.xml",
+      "ci-app/src/main/java/com/group8/ContinuousIntegrationServer.java",
+      "ci-app/src/test/java/com/group8/ContinuousIntegrationServerTest.java"
     ]
   }
 }
