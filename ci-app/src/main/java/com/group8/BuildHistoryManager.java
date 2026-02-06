@@ -4,7 +4,6 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Arrays;
 
@@ -32,7 +31,7 @@ public class BuildHistoryManager {
         JSONObject json = record.toJSONObject();
 
         // format: build_id.json
-        File file = new File(HISTORY_DIR, "build_" + record.getTimestamp() + ".json");
+        File file = new File(HISTORY_DIR, "build_" + record.timestamp() + ".json");
 
         try (FileWriter writer = new FileWriter(file)) {
             writer.write(json.toString());
