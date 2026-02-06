@@ -59,6 +59,16 @@ public class ContinuousIntegrationServer extends AbstractHandler {
                         // TODO: mvn compile
                         response.setStatus(HttpServletResponse.SC_OK);
                         writer.println("CI started for assessment branch.");
+
+
+                        long currentTime = System.currentTimeMillis();
+                        // save build record
+                        BuildRecord record = new BuildRecord(
+                                "fc927b09f7ef35daf466baa1051fa4a662f71989",
+                                "SUCCESS",
+                                currentTime,
+                                "LOGS"
+                        );
                     } else {
                         System.out.println("Not an assessment branch. Ignore.");
                         response.setStatus(HttpServletResponse.SC_OK);

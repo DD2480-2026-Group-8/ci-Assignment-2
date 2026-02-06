@@ -38,3 +38,6 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### Build History ###
+ci-app/build_history/
