@@ -19,6 +19,8 @@ import org.json.JSONObject;
  */
 public class ContinuousIntegrationServer extends AbstractHandler {
 
+    private final BuildHistoryManager historyManager = new BuildHistoryManager();
+
     @Override
     public void handle(
             String target,
@@ -69,6 +71,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
                                 currentTime,
                                 "LOGS"
                         );
+                        historyManager.saveBuild(record);
                     } else {
                         System.out.println("Not an assessment branch. Ignore.");
                         response.setStatus(HttpServletResponse.SC_OK);

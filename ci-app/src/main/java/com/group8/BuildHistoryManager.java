@@ -10,7 +10,8 @@ import java.io.FileWriter;
  * Manages the persistence and retrieval of build history
  */
 public class BuildHistoryManager {
-    private static final String HISTORY_DIR = "./build_history";
+    private static final String HISTORY_DIR =
+            System.getProperty("user.home") + "/ci-build-history";
 
     public BuildHistoryManager() {
         // make sure that dir exists
