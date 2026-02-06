@@ -28,7 +28,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
             HttpServletRequest request,
             HttpServletResponse response) throws IOException, ServletException {
 
-        response.setContentType("text/plain;charset=utf-8");
+        response.setContentType("text/html;charset=utf-8");
         if (baseRequest != null) {
             baseRequest.setHandled(true);
         }
@@ -39,10 +39,22 @@ public class ContinuousIntegrationServer extends AbstractHandler {
         System.out.printf("Received %s %s%n", method, path);
 
         try (PrintWriter writer = response.getWriter()) {
-            if ("GET".equalsIgnoreCase(method) && "/".equals(path)) {
-                response.setStatus(HttpServletResponse.SC_OK);
-                writer.println("CI Server is up and running");
-                return;
+            if ("GET".equalsIgnoreCase(method)) {
+                if ("/".equals(path)) {
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    writer.println(
+                            "CI Server is up and running, " +
+                                    "Go to <a href=\"/builds\">/builds</a> to see history."
+                    );
+                    return;
+                } else if ("/builds".equals(path)) {
+                    writer.println(historyManager.getBuildList());
+                    return;
+                }else if (path.startsWith("/build/")) {
+                    String buildId = path.substring(7);
+                    writer.println(historyManager.getBuildDetail(buildId));
+                    return;
+                }
             }
             if ("POST".equalsIgnoreCase(method) && "/webhook".equals(path)) {
                 try {
@@ -65,6 +77,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
 
                         long currentTime = System.currentTimeMillis();
                         // save build record
+                        // TODO: change them to real variables
                         BuildRecord record = new BuildRecord(
                                 "fc927b09f7ef35daf466baa1051fa4a662f71989",
                                 "SUCCESS",
