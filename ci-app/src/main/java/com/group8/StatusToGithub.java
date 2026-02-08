@@ -10,8 +10,9 @@ public class StatusToGithub {
     public String getCommitStatus(String owner, String repo, String ref) {
         try {
             String url = String.format("https://api.github.com/repos/%s/%s/commits/%s/status", owner, repo, ref);
+            String token = System.getenv("GH_TOKEN");
             HttpClient client = HttpClient.newBuilder().build();
-            HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).build();
+            HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).header("accept", "application/json").header("authorization", "bearer " + token).build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             System.out.println(response.body());
@@ -24,8 +25,8 @@ public class StatusToGithub {
 
     public static void main(String[] args) {
         StatusToGithub status = new StatusToGithub();
-    
-        String url = status.getCommitStatus("louisazhang", "ci-Assignment-2", "TESTING"); // TEST
+
+        String url = status.getCommitStatus("DD2480-2026-Group-8", "ci-Assignment-2", "lz-test-commit"); // TEST
         System.out.println(url);
     }
 }
