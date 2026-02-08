@@ -1,6 +1,7 @@
 package com.group8;
 import java.net.*;
 import java.net.http.*;
+import org.json.JSONObject;
 
 
 public class StatusToGithub {
@@ -38,7 +39,9 @@ public class StatusToGithub {
             HttpClient client = HttpClient.newBuilder().build();
 
             // JSON
-            String jsonString = "{'state': 'success'}";
+            JsonObject obj = new JsonObject();
+            obj.addProperty("state", "success");
+            String jsonString = obj.toString();
 
             HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).header("accept", "application/json").header("authorization", "bearer " + token)
                 .header("content-type", "application/json").POST(HttpRequest.BodyPublishers.ofString(jsonString)).build();
