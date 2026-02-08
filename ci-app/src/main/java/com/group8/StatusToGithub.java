@@ -12,8 +12,8 @@ public class StatusToGithub {
         this.repo = repo;
         this.token = System.getenv("GH_TOKEN");
     }
-    // accept (header), owner, repo, ref
 
+    // accept (header), owner, repo, ref
     public String getCommitStatus(String ref) {
         try {
             String url = String.format("https://api.github.com/repos/%s/%s/commits/%s/status", owner, repo, ref);
@@ -29,7 +29,11 @@ public class StatusToGithub {
         }
     }
 
-    // public boolean setCommitStatus(String owner, String repo, )    
+    // accept (header), owner, repo, sha + STATES
+    public boolean setCommitStatus(String sha) {
+        String url = String.format("https://api.github.com/repos/%s/%s/commits/%s/status", owner, repo, sha);
+        return false;
+    }  
 
     public static void main(String[] args) {
         StatusToGithub status = new StatusToGithub("DD2480-2026-Group-8", "ci-Assignment-2");
