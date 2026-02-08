@@ -99,8 +99,7 @@ public class BuildHistoryManager {
                     json.optString("log") +
                     "</pre></li>" +
                     "</ul>" +
-                    "<p><a href=\"/builds\">Back to build list</a></p>" +
-                    "</body></html>";
+                    "<p><a href=\"/builds\">Back to build list</a></p>";
 
         } catch (Exception e) {
             return "<p>Error reading build file: " + e.getMessage() + "</p>";
