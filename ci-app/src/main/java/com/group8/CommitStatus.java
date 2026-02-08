@@ -1,4 +1,4 @@
-
+package com.group8;
 
 public enum CommitStatus {
     SUCCESS("success"), // latest status for all contexts is success
