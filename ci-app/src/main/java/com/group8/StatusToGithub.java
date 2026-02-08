@@ -3,7 +3,6 @@ import java.net.*;
 import java.net.http.*;
 import org.json.JSONObject;
 
-
 public class StatusToGithub {
     private final String token;
     private final String owner;
@@ -39,8 +38,8 @@ public class StatusToGithub {
             HttpClient client = HttpClient.newBuilder().build();
 
             // JSON
-            JsonObject obj = new JsonObject();
-            obj.addProperty("state", "success");
+            JSONObject obj = new JSONObject();
+            obj.put("state", state);
             String jsonString = obj.toString();
 
             HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).header("accept", "application/json").header("authorization", "bearer " + token)
@@ -49,10 +48,8 @@ public class StatusToGithub {
 
             System.out.println(response.statusCode());
             if (response.statusCode() == 201) {
-                System.out.println("STATUS WAS SET");
                 return true;
             } else {
-                System.out.println("STATUS WAS NOT SET");
                 return false;
             }
         } catch (Exception e) {
