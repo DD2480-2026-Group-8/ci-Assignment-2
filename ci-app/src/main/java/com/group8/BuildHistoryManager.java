@@ -39,7 +39,11 @@ public class BuildHistoryManager {
             System.err.println("Failed to save build history: " + e.getMessage());
         }
     }
-
+    /**
+     * Returns an HTML list of all builds.
+     * Builds are sorted by timestamp in descending order
+     *
+     */
     public String getBuildList() {
         File folder = new File(HISTORY_DIR);
         File[] files = folder.listFiles();
@@ -71,6 +75,10 @@ public class BuildHistoryManager {
         return sb.toString();
     }
 
+    /**
+     * Returns detailed information for a specific build.
+     * @param id build identifier (timestamp part of the filename)
+     */
     public String getBuildDetail(String id) {
         File f = new File(HISTORY_DIR, "build_" + id + ".json");
         if (!f.exists()) {

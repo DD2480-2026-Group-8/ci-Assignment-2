@@ -43,8 +43,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
                 if ("/".equals(path)) {
                     response.setStatus(HttpServletResponse.SC_OK);
                     writer.println(
-                            "CI Server is up and running, " +
-                                    "Go to <a href=\"/builds\">/builds</a> to see history."
+                            "CI Server is up and running. Go to <a href=\"/builds\">/builds</a> to see the build history."
                     );
                     return;
                 } else if ("/builds".equals(path)) {
