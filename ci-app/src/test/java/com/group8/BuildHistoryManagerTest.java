@@ -3,31 +3,36 @@ package com.group8;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import java.io.File;
+import org.junit.jupiter.api.io.TempDir;
+
+
+import java.nio.file.Path;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class BuildHistoryManagerTest {
 
+    @TempDir
+    Path tempDir;  // JUnit creates and cleans this automatically
+
     private BuildHistoryManager manager;
-    private final String testDir = System.getProperty("user.home") + "/ci-build-history";
+    private String originalHomeDir;
+
 
     @BeforeEach
     public void setUp() {
+        originalHomeDir = System.getProperty("user.home");
+        
+        System.setProperty("user.home", tempDir.toString());
         manager = new BuildHistoryManager();
-    }
+}
 
-    @AfterEach
-    public void tearDown() throws Exception {
-        File dir = new File(testDir);
-        if (dir.exists()) {
-            for (File file : dir.listFiles()) {
-                file.delete();
-            }
-            dir.delete();
-        }
-    }
-
-    @Test
+    
+@AfterEach
+public void tearDown() {
+    // Restore original home directory
+    System.setProperty("user.home", originalHomeDir);
+}
+@Test
     public void testEmptyBuildList() {
         String buildList = manager.getBuildList();
         assertEquals("No builds found.", buildList);
