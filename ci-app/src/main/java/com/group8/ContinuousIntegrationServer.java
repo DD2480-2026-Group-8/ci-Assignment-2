@@ -59,6 +59,20 @@ public class ContinuousIntegrationServer extends AbstractHandler {
                         // TODO: mvn compile
                         response.setStatus(HttpServletResponse.SC_OK);
                         writer.println("CI started for assessment branch.");
+
+
+
+
+
+                        // Get JSON information
+                        String cloneUrl = payload.getJSONObject("repository").getString("clone_url"); // web addres for cloning 
+                        
+                        // trigger the actual CI !!!
+                        CIrunner.triggerCI(cloneUrl);
+
+                        
+
+
                     } else {
                         System.out.println("Not an assessment branch. Ignore.");
                         response.setStatus(HttpServletResponse.SC_OK);
@@ -74,12 +88,6 @@ public class ContinuousIntegrationServer extends AbstractHandler {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             writer.println("404 Not Found");
         }
-
-        // TODO: plug in CI logic here:
-        // 1. Parse webhook payload (repo/branch/SHA)
-        // 2. Clone or update repository
-        // 3. Run build/tests
-        // 4. Report status back to GitHub
     }
 
         /**
