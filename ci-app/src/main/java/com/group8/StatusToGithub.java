@@ -1,4 +1,5 @@
 package com.group8;
+
 import java.net.*;
 import java.net.http.*;
 import org.json.JSONObject;
@@ -7,10 +8,17 @@ public class StatusToGithub {
     private final String token;
     private final String owner;
     private final String repo;
+    private final HttpClientWrapper client;
 
     public StatusToGithub(String owner, String repo) {
+        this(owner, repo, new HttpClientWrapperImpl());
+    }
+
+    // Constructor for testing - allows injection of HttpClientWrapper
+    StatusToGithub(String owner, String repo, HttpClientWrapper client) {
         this.owner = owner;
         this.repo = repo;
+        this.client = client;
         this.token = System.getenv("GH_TOKEN");
     }
 
@@ -18,8 +26,8 @@ public class StatusToGithub {
     public String getCommitStatus(String ref) {
         try {
             String url = String.format("https://api.github.com/repos/%s/%s/commits/%s/status", owner, repo, ref);
-            HttpClient client = HttpClient.newBuilder().build();
-            HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).header("accept", "application/json").header("authorization", "bearer " + token).build();
+            HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).header("accept", "application/json")
+                    .header("authorization", "bearer " + token).build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             System.out.println(response.body());
@@ -34,16 +42,17 @@ public class StatusToGithub {
     // STATES: error, failure, pending, success
     public boolean setCommitStatus(String sha, String state) {
         try {
-            String url = String.format("https://api.github.com/repos/%s/%s/statuses/%s", owner, repo, sha); 
-            HttpClient client = HttpClient.newBuilder().build();
+            String url = String.format("https://api.github.com/repos/%s/%s/statuses/%s", owner, repo, sha);
 
             // JSON
             JSONObject obj = new JSONObject();
             obj.put("state", state);
             String jsonString = obj.toString();
 
-            HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).header("accept", "application/json").header("authorization", "bearer " + token)
-                .header("content-type", "application/json").POST(HttpRequest.BodyPublishers.ofString(jsonString)).build();
+            HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).header("accept", "application/json")
+                    .header("authorization", "bearer " + token)
+                    .header("content-type", "application/json").POST(HttpRequest.BodyPublishers.ofString(jsonString))
+                    .build();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
             System.out.println(response.statusCode());
@@ -56,7 +65,7 @@ public class StatusToGithub {
             e.printStackTrace();
             return false;
         }
-    }  
+    }
 
     public static void main(String[] args) {
         StatusToGithub status = new StatusToGithub("DD2480-2026-Group-8", "ci-Assignment-2");
