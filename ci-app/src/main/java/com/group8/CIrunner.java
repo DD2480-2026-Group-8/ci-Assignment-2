@@ -32,15 +32,25 @@ public class CIrunner {
 
             // 2. Do the cloning (in the clone file)
             System.out.println("Cloning... "); // see in console
-            runner(List.of("git", "clone", cloneUrl, "repo"), cloneDir); // also, makes sure the new file is always called repo
+            runner(List.of("git", "clone", cloneUrl, "repo"), cloneDir); // also, makes sure the new file (inside cloneDir) is always called repo
             File testDir = new File(cloneDir, "repo");
             
-
-            // 4. Run tests, that can work for many operating systems
+            //that can work for many operating systems
             String mvn = System.getProperty("os.name").toLowerCase().contains("win")
                 ? "mvn.cmd"
                 : "mvn";
 
+
+            // 4. do compile (mvn compile)
+            System.out.println("Doing mvn Compile... "); 
+            int compileResult = runner(List.of(mvn, "-f", "ci-app/pom.xml", "compile"),testDir); // point at pom
+            if (compileResult == 0) {
+                System.out.println("Compile is succesfull");
+            } else {
+                System.out.println("Compile has failed");
+            }  
+
+            // 4. Run tests, 
             System.out.println("Running mvn test for " + ref);
             int finalResult = runner(List.of(mvn, "-f", "ci-app/pom.xml", "test"),testDir); // point at pom
 
@@ -52,7 +62,6 @@ public class CIrunner {
                 System.out.println("For SHA " + sha + " at least one test has failed!");
             }
 
-            
 
         } catch (Exception e) {
             System.err.println("CI error: " + e.getMessage());

@@ -61,8 +61,6 @@ public class ContinuousIntegrationServer extends AbstractHandler {
                     if ("refs/heads/assessment".equals(ref)) {
                         System.out.println("Assessment branch detected! Triggering CI process...");
 
-                        // TODO: mvn compile
-
                         response.setStatus(HttpServletResponse.SC_OK);
                         writer.println("CI started for assessment branch.");
                     

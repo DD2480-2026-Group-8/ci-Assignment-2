@@ -5,7 +5,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.BufferedReader;
 import java.io.PrintWriter;
+import java.io.StringReader;
 import java.io.StringWriter;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -111,6 +113,48 @@ class ContinuousIntegrationServerTest {
                 () -> "Expected non-assessment branch to be ignored, but got: " + responseWriter
         );
     }
+
+
+
+
+
+
+
+    
+    // CI tests:
+    void testInvalidPathReturns404() throws Exception {
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getRequestURI()).thenReturn("/invalid");
+
+        ciServer.handle("/invalid", null, request, response);
+
+        verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);
+        assertTrue(
+            responseWriter.toString().contains("404"),
+            () -> "Expected 404 response but got: " + responseWriter
+        );
+    }
+
+
+    @Test
+    void testMalformedJsonReturns400() throws Exception {
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getRequestURI()).thenReturn("/webhook");
+
+        String badPayload = "{ not valid json ";
+
+        when(request.getReader()).thenReturn(new BufferedReader(new StringReader(badPayload)));
+
+        ciServer.handle("/webhook", null, request, response);
+
+        verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    }
+
+
+
+
+
+
 
 }
 
