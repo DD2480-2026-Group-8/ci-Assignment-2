@@ -38,7 +38,7 @@ class StatusToGithubTest {
     }
 
     /**
-     * Test that getCommitStatus returns the correct URL.
+     * Test that getCommitStatus returns the correct status (success)
      */
     @Test
     void testGetCommitStatusReturnsSuccess() throws Exception {
@@ -60,6 +60,56 @@ class StatusToGithubTest {
 
         assertEquals("success", result);
     }
+
+
+    /**
+     * Test that getCommitStatus returns the correct status (failure)
+     */
+    @Test
+    void testGetCommitStatusReturnsFailure() throws Exception {
+        HttpClientWrapper testWrapper = new HttpClientWrapper() {
+            @Override
+            public <T> HttpResponse<T> send(HttpRequest request, HttpResponse.BodyHandler<T> responseBodyHandler) throws Exception {
+                JSONObject obj = new JSONObject();
+                obj.put("state", "failure");
+                String jsonString = obj.toString();
+
+                @SuppressWarnings("unchecked")
+                HttpResponse<T> mockResponse = (HttpResponse<T>) new MockHttpResponse(200, jsonString);
+                return mockResponse;
+            }
+        };
+
+        StatusToGithub statusToGithub = new StatusToGithub(TEST_OWNER, TEST_REPO, testWrapper);
+        String result = statusToGithub.getCommitStatus("abc123");
+
+        assertEquals("failure", result);
+    }
+
+    /**
+     * Test that getCommitStatus returns the correct status (pending)
+     */
+    @Test
+    void testGetCommitStatusReturnsPending() throws Exception {
+        HttpClientWrapper testWrapper = new HttpClientWrapper() {
+            @Override
+            public <T> HttpResponse<T> send(HttpRequest request, HttpResponse.BodyHandler<T> responseBodyHandler) throws Exception {
+                JSONObject obj = new JSONObject();
+                obj.put("state", "success");
+                String jsonString = obj.toString();
+
+                @SuppressWarnings("unchecked")
+                HttpResponse<T> mockResponse = (HttpResponse<T>) new MockHttpResponse(400, jsonString); // 400 --> returns pending
+                return mockResponse;
+            }
+        };
+
+        StatusToGithub statusToGithub = new StatusToGithub(TEST_OWNER, TEST_REPO, testWrapper);
+        String result = statusToGithub.getCommitStatus("abc123");
+
+        assertEquals("pending", result);
+    }
+
 
     /**
      * Simple mock implementation of HttpResponse for testing.
