@@ -24,7 +24,7 @@ public class StatusToGithub {
 
     /*
         Parameters: sha to GitHub commit
-        Returns: commit status. pending for anything without a commit status yet
+        Returns: commit status
 
         NOTES:
             - failure if any of the contexts report as error or failure
@@ -58,7 +58,7 @@ s           - success if the latest status for all contexts is success
      */
     public boolean setCommitStatus(String sha, String state) {
         try {
-            if (state != "error" || state != "pending" || state != "success" || state != "failure") { // only valid states
+            if (!(state.equals("error") || state.equals("pending") || state.equals("success") || state.equals("failure"))) { // only valid states
                 return false;
             }
 

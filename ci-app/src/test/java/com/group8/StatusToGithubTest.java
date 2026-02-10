@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 
 class StatusToGithubTest {
@@ -21,7 +22,12 @@ class StatusToGithubTest {
             @Override
             public <T> HttpResponse<T> send(HttpRequest request, HttpResponse.BodyHandler<T> responseBodyHandler) throws Exception {
                 @SuppressWarnings("unchecked")
-                HttpResponse<T> mockResponse = (HttpResponse<T>) new MockHttpResponse(201);
+                
+                JSONObject obj = new JSONObject();
+                obj.put("state", "success");
+                String jsonString = obj.toString();
+
+                HttpResponse<T> mockResponse = (HttpResponse<T>) new MockHttpResponse(201, jsonString);
                 return mockResponse;
             }
         };
@@ -36,12 +42,17 @@ class StatusToGithubTest {
      * Test that getCommitStatus returns the correct URL.
      */
     @Test
-    void testGetCommitStatusReturnsUrl() throws Exception {
+    void testGetCommitStatusReturnsSuccess() throws Exception {
         HttpClientWrapper testWrapper = new HttpClientWrapper() {
             @Override
             public <T> HttpResponse<T> send(HttpRequest request, HttpResponse.BodyHandler<T> responseBodyHandler) throws Exception {
                 @SuppressWarnings("unchecked")
-                HttpResponse<T> mockResponse = (HttpResponse<T>) new MockHttpResponse(200);
+                
+                JSONObject obj = new JSONObject();
+                obj.put("state", "success");
+                String jsonString = obj.toString();
+
+                HttpResponse<T> mockResponse = (HttpResponse<T>) new MockHttpResponse(200, jsonString);
                 return mockResponse;
             }
         };
@@ -49,7 +60,7 @@ class StatusToGithubTest {
         StatusToGithub statusToGithub = new StatusToGithub(TEST_OWNER, TEST_REPO, testWrapper);
         String result = statusToGithub.getCommitStatus("abc123");
 
-        assertTrue(result.contains("api.github.com/repos/test-owner/test-repo/commits/abc123/status"));
+        assertEquals("success", result);
     }
 
     /**
@@ -57,9 +68,11 @@ class StatusToGithubTest {
      */
     private static class MockHttpResponse implements HttpResponse<String> {
         private final int statusCode;
+        public final String body;
 
-        public MockHttpResponse(int statusCode) {
+        public MockHttpResponse(int statusCode, String body) {
             this.statusCode = statusCode;
+            this.body = body;
         }
 
         @Override
@@ -69,7 +82,7 @@ class StatusToGithubTest {
 
         @Override
         public String body() {
-            return "";
+            return body;
         }
 
         @Override
