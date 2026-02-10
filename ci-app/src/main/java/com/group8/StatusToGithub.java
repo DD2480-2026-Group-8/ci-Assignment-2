@@ -29,7 +29,7 @@ public class StatusToGithub {
      */
     public String getCommitStatus(String sha) {
         try {
-            String url = String.format("https://api.github.com/repos/%s/%s/commits/%s/status", owner, repo, ref);
+            String url = String.format("https://api.github.com/repos/%s/%s/commits/%s/status", owner, repo, sha);
             HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).header("accept", "application/json")
                 .header("authorization", "bearer " + token).build();
 
