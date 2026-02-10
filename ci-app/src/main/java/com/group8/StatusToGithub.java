@@ -3,7 +3,6 @@ package com.group8;
 import java.net.*;
 import java.net.http.*;
 import org.json.JSONObject;
-import org.json.JSONParserConfiguration;
 
 public class StatusToGithub {
     private final String token;
@@ -26,6 +25,11 @@ public class StatusToGithub {
     /*
         Parameters: sha to GitHub commit
         Returns: commit status. pending for anything without a commit status yet
+
+        NOTES:
+            - failure if any of the contexts report as error or failure
+            - pending if there are no statuses or a context is pending
+s           - success if the latest status for all contexts is success
      */
     public String getCommitStatus(String sha) {
         try {
@@ -39,11 +43,12 @@ public class StatusToGithub {
                 JSONObject obj = new JSONObject(response.body());
                 return obj.getString("state");
             } else {
+                System.out.println(response.statusCode());
                 return "pending";
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return "failure";
         }
     }
 
@@ -53,6 +58,10 @@ public class StatusToGithub {
      */
     public boolean setCommitStatus(String sha, String state) {
         try {
+            if (state != "error" || state != "pending" || state != "success" || state != "failure") { // only valid states
+                return false;
+            }
+
             String url = String.format("https://api.github.com/repos/%s/%s/statuses/%s", owner, repo, sha);
 
             // JSON
@@ -84,8 +93,6 @@ public class StatusToGithub {
         String commitStatus = status.getCommitStatus("fcfc6c60da2c1cef506eec5089c3eca07d38900d");
         
         System.out.println(commitStatus);
-
-        // boolean url = status.setCommitStatus("cbc1e57873979dbd97ccd532a01c85e138592f1a", "success");
         System.out.println(url);
     }
 }
