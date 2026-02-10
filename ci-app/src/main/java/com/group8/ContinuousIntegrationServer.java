@@ -50,28 +50,25 @@ public class ContinuousIntegrationServer extends AbstractHandler {
                     // 2. parse JSON
                     JSONObject payload = new JSONObject(body);
                     String ref = payload.optString("ref", "");
+                    // 2. SHA
+                    String sha = payload.optString("after", "");
+                    // 3. clone URL
 
+                    String cloneURL = payload.getJSONObject("repository").getString("clone_url"); // web addres for cloning 
                     System.out.println("Incoming push on ref: " + ref);
 
                     // 3. check branch
                     if ("refs/heads/assessment".equals(ref)) {
                         System.out.println("Assessment branch detected! Triggering CI process...");
+
                         // TODO: mvn compile
+
                         response.setStatus(HttpServletResponse.SC_OK);
                         writer.println("CI started for assessment branch.");
-
-
-
-
-
-                        // Get JSON information
-                        String cloneUrl = payload.getJSONObject("repository").getString("clone_url"); // web addres for cloning 
-                        
-                        // trigger the actual CI !!!
-                        CIrunner.triggerCI(cloneUrl);
-
-                        
-
+                    
+        
+                    // trigger the actual CI !!!
+                    CIrunner.triggerCI(cloneURL, ref, sha);
 
                     } else {
                         System.out.println("Not an assessment branch. Ignore.");

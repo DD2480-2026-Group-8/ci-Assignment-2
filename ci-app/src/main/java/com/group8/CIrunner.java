@@ -13,42 +13,43 @@ public class CIrunner {
             ProcessBuilder pb = new ProcessBuilder(cmd);
             pb.directory(dir);
             Process p = pb.start();
-            return p.waitFor(); // 0 --> success, >0 --> failure
+            return p.waitFor(); // 0 --> success (all test pass!), not-zero --> failure (at least one test has failed!)
     }
 
 
 
-    public static void triggerCI(String cloneUrl) {
+    public static void triggerCI(String cloneUrl, String ref, String sha) {
         System.out.println("Starting CI");
         try {
-            // 1. Create the parent file for the clones
+            // 1. Create the parent file where we will store the clones
             File parentFile = new File("ci-parent-builds");
             parentFile.mkdirs();   // check this came into existance 
 
-             // create the actual clone file 
-            File cloneDir = new File(parentFile, "cloneFile");
+             // create the actual clone file. The files name is based on the sha. 
+            File cloneDir = new File(parentFile, sha); // parent, new file name
             cloneDir.mkdirs();
 
 
-            // 2. Do the cloning 
+            // 2. Do the cloning (in the clone file)
             System.out.println("Cloning... "); // see in console
-            runner(List.of("git", "clone", cloneUrl, "cloneFile"),parentFile);
+            runner(List.of("git", "clone", cloneUrl, "repo"), cloneDir); // also, makes sure the new file is always called repo
+            File testDir = new File(cloneDir, "repo");
+            
 
-
-            // 4. Run tests
+            // 4. Run tests, that can work for many operating systems
             String mvn = System.getProperty("os.name").toLowerCase().contains("win")
                 ? "mvn.cmd"
                 : "mvn";
 
-             System.out.println("Running mvn test...");
-            int exitCode = runner(List.of(mvn, "-f", "ci-app/pom.xml", "test"),cloneDir); // point at pom
+            System.out.println("Running mvn test for " + ref);
+            int finalResult = runner(List.of(mvn, "-f", "ci-app/pom.xml", "test"),testDir); // point at pom
 
 
-            // 5. Result:
-            if (exitCode == 0) {
-                System.out.println("TEST PASSED");
+            // 5. Result: What happened and for what commit?
+            if (finalResult == 0) {
+                System.out.println("For SHA" + sha + " all tests have passed!");
             } else {
-                System.out.println("TEST FAILED");
+                System.out.println("For SHA " + sha + " at least one test has failed!");
             }
 
             
