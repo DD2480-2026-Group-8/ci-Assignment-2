@@ -21,12 +21,11 @@ class StatusToGithubTest {
         HttpClientWrapper testWrapper = new HttpClientWrapper() {
             @Override
             public <T> HttpResponse<T> send(HttpRequest request, HttpResponse.BodyHandler<T> responseBodyHandler) throws Exception {
-                @SuppressWarnings("unchecked")
-                
                 JSONObject obj = new JSONObject();
                 obj.put("state", "success");
                 String jsonString = obj.toString();
 
+                @SuppressWarnings("unchecked")
                 HttpResponse<T> mockResponse = (HttpResponse<T>) new MockHttpResponse(201, jsonString);
                 return mockResponse;
             }
@@ -46,12 +45,11 @@ class StatusToGithubTest {
         HttpClientWrapper testWrapper = new HttpClientWrapper() {
             @Override
             public <T> HttpResponse<T> send(HttpRequest request, HttpResponse.BodyHandler<T> responseBodyHandler) throws Exception {
-                @SuppressWarnings("unchecked")
-                
                 JSONObject obj = new JSONObject();
                 obj.put("state", "success");
                 String jsonString = obj.toString();
 
+                @SuppressWarnings("unchecked")
                 HttpResponse<T> mockResponse = (HttpResponse<T>) new MockHttpResponse(200, jsonString);
                 return mockResponse;
             }
