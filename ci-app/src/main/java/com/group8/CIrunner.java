@@ -4,9 +4,31 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Core CI pipeline runner.
+ * <p>
+ * Given a Git repository URL, branch ref and commit SHA, this class:
+ * </p>
+ * <ol>
+ * <li>Clones the repository into a dedicated build directory.</li>
+ * <li>Runs {@code mvn compile} on the cloned project (P1).</li>
+ * <li>Runs {@code mvn test} on the cloned project (P2).</li>
+ * <li>Reports the overall result as a {@link BuildRecord} and updates the
+ * GitHub commit status (P3).</li>
+ * </ol>
+ */
 public class CIrunner {
 
-    // Use processBuilder to run commands
+    /**
+     * Executes the given command in the specified working directory.
+     *
+     * @param cmd list representing the command and its arguments
+     * @param dir working directory in which the process should run
+     * @return the process exit code; {@code 0} means success
+     * @throws IOException          if the process cannot be started
+     * @throws InterruptedException if the current thread is interrupted while
+     *                              waiting
+     */
     public static int runner(List<String> cmd, File dir) throws IOException, InterruptedException {
         ProcessBuilder pb = new ProcessBuilder(cmd);
         pb.directory(dir);
@@ -17,6 +39,15 @@ public class CIrunner {
                             // failed!)
     }
 
+    /**
+     * Triggers the CI workflow for a single commit.
+     *
+     * @param cloneUrl HTTPS clone URL of the target repository
+     * @param ref      Git ref that triggered the build (e.g.
+     *                 {@code refs/heads/main})
+     * @param sha      commit SHA to build and test
+     * @return a {@link BuildRecord} capturing status, timestamp and build log
+     */
     public static BuildRecord triggerCI(String cloneUrl, String ref, String sha) {
         System.out.println("Starting CI");
 
@@ -45,10 +76,10 @@ public class CIrunner {
             }
             cloneUrl = cloneUrl.replaceFirst(
                     "https://",
-                    "https://oauth2:" + token + "@"
-            );
+                    "https://oauth2:" + token + "@");
 
-            int cloneExit = runner(List.of("git", "clone", cloneUrl, "repo"), cloneDir); // also, makes sure the new file (inside
+            int cloneExit = runner(List.of("git", "clone", cloneUrl, "repo"), cloneDir); // also, makes sure the new
+                                                                                         // file (inside
             // cloneDir) is always called repo
             log.append("git clone exit=").append(cloneExit).append("\n");
             if (cloneExit != 0) {
