@@ -16,18 +16,40 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.group8.ContinuousIntegrationServer;
-
 class ContinuousIntegrationServerTest {
 
-    private ContinuousIntegrationServer ciServer;
+    /**
+     * Test double of the CI server that records invocations of {@link #triggerCI}
+     * instead of spawning real CI jobs (git clone + mvn) during unit tests.
+     *
+     * This prevents recursive Maven invocations on CI (e.g. GitHub Actions) where
+     * {@code GH_TOKEN} is set and {@link CIrunner#triggerCI} would otherwise run
+     * a full build inside the tests.
+     */
+    private static class TestContinuousIntegrationServer extends ContinuousIntegrationServer {
+        boolean ciTriggered = false;
+        String lastCloneURL;
+        String lastRef;
+        String lastSha;
+
+        @Override
+        protected void triggerCI(String cloneURL, String ref, String sha) {
+            this.ciTriggered = true;
+            this.lastCloneURL = cloneURL;
+            this.lastRef = ref;
+            this.lastSha = sha;
+            // Do NOT call CIrunner.triggerCI here – unit tests should stay fast and side‑effect free.
+        }
+    }
+
+    private TestContinuousIntegrationServer ciServer;
     private HttpServletRequest request;
     private HttpServletResponse response;
     private StringWriter responseWriter;
 
     @BeforeEach
     void setUp() throws Exception {
-        ciServer = new ContinuousIntegrationServer();
+        ciServer = new TestContinuousIntegrationServer();
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         responseWriter = new StringWriter();

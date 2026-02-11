@@ -12,12 +12,16 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.json.JSONObject;
 
-/**
- * ContinuousIntegrationServer acts as a simple webhook endpoint.
- * For now it just responds with a basic message; later you'll plug in
- * cloning, building, testing, and GitHub status updates here.
- */
 public class ContinuousIntegrationServer extends AbstractHandler {
+
+    /**
+     * Hook for triggering the CI pipeline. In production this delegates to
+     * {@link CIrunner}, but tests can override this method (in a subclass) to
+     * avoid spawning external Maven processes.
+     */
+    protected void triggerCI(String cloneURL, String ref, String sha) {
+        CIrunner.triggerCI(cloneURL, ref, sha);
+    }
 
     @Override
     public void handle(
@@ -66,7 +70,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
                         writer.println("CI started for " + ref + ".");
 
                         // trigger the actual CI !!!
-                        CIrunner.triggerCI(cloneURL, ref, sha);
+                        triggerCI(cloneURL, ref, sha);
                     } else {
                         System.out.println("Not an assessment/main branch. Ignore.");
                         response.setStatus(HttpServletResponse.SC_OK);
