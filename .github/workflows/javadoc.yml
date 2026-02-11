@@ -1,32 +1,49 @@
-name: Javadoc
+name: Deploy Javadoc to Pages
 
 on:
   push:
-    branches: [main]
-  workflow_dispatch: {}
+    branches: ["main"]
+  workflow_dispatch:
+
+# Allow GITHUB_TOKEN to deploy to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Prevent multiple concurrent Javadoc deployments
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
-  build-and-deploy-javadoc:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
 
       - name: Set up JDK 25
         uses: actions/setup-java@v4
         with:
           java-version: "25"
           distribution: "temurin"
+          cache: maven
 
       - name: Build Javadoc
-        run: |
-          cd ci-app
-          mvn -q -DskipTests javadoc:javadoc
+        run: mvn -B javadoc:javadoc --file ci-app/pom.xml
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "ci-app/target/site/apidocs"
 
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          personal_token: ${{ secrets.PAGES_TOKEN }}
-          publish_branch: gh-pages
-          publish_dir: ci-app/target/site/apidocs
+        id: deployment
+        uses: actions/deploy-pages@v4
