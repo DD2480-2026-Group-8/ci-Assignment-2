@@ -37,7 +37,10 @@ jobs:
           cache: maven
 
       - name: Build Javadoc
-        run: mvn -B javadoc:javadoc --file ci-app/pom.xml
+        run: |
+          cd ci-app
+          mvn -B javadoc:javadoc
+          ls -la target/site/apidocs/
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
