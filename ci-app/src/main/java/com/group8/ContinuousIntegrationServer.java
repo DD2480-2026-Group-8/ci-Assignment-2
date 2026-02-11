@@ -20,12 +20,12 @@ import org.json.JSONObject;
 public class ContinuousIntegrationServer extends AbstractHandler {
 
     /**
-     * Hook for triggering the CI pipeline. In production this delegates to
-     * {@link CIrunner}, but tests can override this method (in a subclass) to
-     * avoid spawning external Maven processes.
+     * Hook for triggering the CI pipeline and producing a {@link BuildRecord}.
+     * In production this delegates to {@link CIrunner}, but tests can override
+     * this method (in a subclass) to avoid spawning external Maven processes.
      */
-    protected void triggerCI(String cloneURL, String ref, String sha) {
-        CIrunner.triggerCI(cloneURL, ref, sha);
+    protected BuildRecord triggerCI(String cloneURL, String ref, String sha) {
+        return CIrunner.triggerCI(cloneURL, ref, sha);
     }
 
     private final BuildHistoryManager historyManager = new BuildHistoryManager();
@@ -86,7 +86,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
                         writer.println("CI started for " + ref + ".");
 
                         // trigger the actual CI !!!
-                        BuildRecord record = CIrunner.triggerCI(cloneURL, ref, sha);
+                        BuildRecord record = triggerCI(cloneURL, ref, sha);
                         historyManager.saveBuild(record);
                     } else {
                         System.out.println("Not an assessment/main branch. Ignore.");

@@ -28,17 +28,15 @@ class ContinuousIntegrationServerTest {
      */
     private static class TestContinuousIntegrationServer extends ContinuousIntegrationServer {
         boolean ciTriggered = false;
-        String lastCloneURL;
         String lastRef;
-        String lastSha;
 
         @Override
-        protected void triggerCI(String cloneURL, String ref, String sha) {
+        protected BuildRecord triggerCI(String cloneURL, String ref, String sha) {
             this.ciTriggered = true;
-            this.lastCloneURL = cloneURL;
             this.lastRef = ref;
-            this.lastSha = sha;
-            // Do NOT call CIrunner.triggerCI here – unit tests should stay fast and side‑effect free.
+            // Do NOT call CIrunner.triggerCI here – unit tests should stay fast and
+            // side‑effect free.
+            return new BuildRecord(sha, "SUCCESS", System.currentTimeMillis(), "stub build from test");
         }
     }
 
@@ -113,6 +111,12 @@ class ContinuousIntegrationServerTest {
         assertTrue(
                 responseWriter.toString().toLowerCase().contains("assessment"),
                 () -> "Expected assessment branch handling, but got: " + responseWriter);
+
+        // Ensure CI trigger hook was called with correct ref
+        assertTrue(ciServer.ciTriggered, "Expected CI to be triggered for assessment branch");
+        assertTrue(
+                "refs/heads/assessment".equals(ciServer.lastRef),
+                () -> "Expected lastRef to be refs/heads/assessment but was: " + ciServer.lastRef);
     }
 
     @Test
@@ -134,6 +138,12 @@ class ContinuousIntegrationServerTest {
                 responseWriter.toString().toLowerCase().contains("refs/heads/main")
                         || responseWriter.toString().toLowerCase().contains("ci started for"),
                 () -> "Expected main branch handling, but got: " + responseWriter);
+
+        // Ensure CI trigger hook was called with correct ref
+        assertTrue(ciServer.ciTriggered, "Expected CI to be triggered for main branch");
+        assertTrue(
+                "refs/heads/main".equals(ciServer.lastRef),
+                () -> "Expected lastRef to be refs/heads/main but was: " + ciServer.lastRef);
     }
 
     @Test
