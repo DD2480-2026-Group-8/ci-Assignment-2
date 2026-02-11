@@ -22,6 +22,7 @@ public class BuildRecordTest {
 
         assertEquals(commit, json.getString("commit"));
         //assertEquals(status, json.getString("status"));
+
         // make it wrong
         assertEquals(status, "FAILURE");
 
