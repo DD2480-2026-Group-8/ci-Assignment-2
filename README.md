@@ -135,6 +135,16 @@ When using ngrok, replace `localhost:8080` with your ngrok URL (e.g., `https://a
 | Jingze Guo         | Assessment webhook implementation, Maven project structure, build history feature (`BuildHistoryManager.java`, P7), code review                                                                   |
 | Louisa Zhang       | Commit status implementation with unit tests (`StatusToGithub.java`, `StatusToGithubTest.java`, P3)                                                                                               |
 
+### Remarkable Achievement (P8)
+
+We are proud of three key achievements:
+
+- **Automated Javadoc to GitHub Pages**: API documentation is automatically built and published on every push to main, accessible at a public URL.
+
+- **Full Docker support**: The CI server can run in Docker containers with multi-stage builds and docker-compose, making deployment easy.
+
+- **Dogfooding**: We use our own CI server (via ngrok) alongside GitHub Actions to test the project. Every push to main runs through both CI systems, proving our implementation works in real scenarios.
+
 ### Documentation (P5)
 
 Public classes and methods in the main application code are documented with Javadoc comments.  
