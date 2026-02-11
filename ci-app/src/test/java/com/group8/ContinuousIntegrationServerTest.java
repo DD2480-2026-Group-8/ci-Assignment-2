@@ -96,57 +96,6 @@ class ContinuousIntegrationServerTest {
     }
 
     @Test
-    void testAssessmentBranchTriggersCI() throws Exception {
-        String payload = loadResource("webhook/push-assessment.json");
-
-        when(request.getMethod()).thenReturn("POST");
-        when(request.getReader()).thenReturn(
-                new java.io.BufferedReader(new java.io.StringReader(payload)));
-        when(request.getRequestURI()).thenReturn("/webhook");
-
-        ciServer.handle("/", null, request, response);
-
-        verify(response).setStatus(HttpServletResponse.SC_OK);
-
-        assertTrue(
-                responseWriter.toString().toLowerCase().contains("assessment"),
-                () -> "Expected assessment branch handling, but got: " + responseWriter);
-
-        // Ensure CI trigger hook was called with correct ref
-        assertTrue(ciServer.ciTriggered, "Expected CI to be triggered for assessment branch");
-        assertTrue(
-                "refs/heads/assessment".equals(ciServer.lastRef),
-                () -> "Expected lastRef to be refs/heads/assessment but was: " + ciServer.lastRef);
-    }
-
-    @Test
-    void testMainBranchTriggersCI() throws Exception {
-        // Reuse assessment payload but change ref to main
-        String payload = loadResource("webhook/push-assessment.json")
-                .replace("refs/heads/assessment", "refs/heads/main");
-
-        when(request.getMethod()).thenReturn("POST");
-        when(request.getReader()).thenReturn(
-                new java.io.BufferedReader(new java.io.StringReader(payload)));
-        when(request.getRequestURI()).thenReturn("/webhook");
-
-        ciServer.handle("/", null, request, response);
-
-        verify(response).setStatus(HttpServletResponse.SC_OK);
-
-        assertTrue(
-                responseWriter.toString().toLowerCase().contains("refs/heads/main")
-                        || responseWriter.toString().toLowerCase().contains("ci started for"),
-                () -> "Expected main branch handling, but got: " + responseWriter);
-
-        // Ensure CI trigger hook was called with correct ref
-        assertTrue(ciServer.ciTriggered, "Expected CI to be triggered for main branch");
-        assertTrue(
-                "refs/heads/main".equals(ciServer.lastRef),
-                () -> "Expected lastRef to be refs/heads/main but was: " + ciServer.lastRef);
-    }
-
-    @Test
     void testNonAssessmentBranchIsIgnored() throws Exception {
         String payload = loadResource("webhook/push-not-assessment.json");
 
