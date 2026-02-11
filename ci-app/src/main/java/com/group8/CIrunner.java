@@ -28,6 +28,16 @@ public class CIrunner {
 
             // 2. Do the cloning (in the clone file)
             System.out.println("Cloning... "); // see in console
+
+            String token = System.getenv("GH_TOKEN");
+            if (token == null || token.isBlank()) {
+                throw new IllegalStateException("GH_TOKEN is not set");
+            }
+            cloneUrl = cloneUrl.replaceFirst(
+                    "https://",
+                    "https://oauth2:" + token + "@"
+            );
+
             runner(List.of("git", "clone", cloneUrl, "repo"), cloneDir); // also, makes sure the new file (inside
                                                                          // cloneDir) is always called repo
             File testDir = new File(cloneDir, "repo");
