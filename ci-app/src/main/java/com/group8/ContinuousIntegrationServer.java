@@ -19,6 +19,7 @@ import org.json.JSONObject;
  */
 public class ContinuousIntegrationServer extends AbstractHandler {
 
+
     /**
      * Hook for triggering the CI pipeline and producing a {@link BuildRecord}.
      * In production this delegates to {@link CIrunner}, but tests can override
