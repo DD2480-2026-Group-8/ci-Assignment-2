@@ -106,7 +106,6 @@ class StatusToGithubTest {
 
         StatusToGithub statusToGithub = new StatusToGithub(TEST_OWNER, TEST_REPO, testWrapper);
         String result = statusToGithub.getCommitStatus("abc123");
-
         assertEquals("pending", result);
     }
 
