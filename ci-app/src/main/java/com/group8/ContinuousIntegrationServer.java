@@ -50,15 +50,24 @@ public class ContinuousIntegrationServer extends AbstractHandler {
                     // 2. parse JSON
                     JSONObject payload = new JSONObject(body);
                     String ref = payload.optString("ref", "");
+                    // 2. SHA
+                    String sha = payload.optString("after", "");
+                    // 3. clone URL
 
+                    String cloneURL = payload.getJSONObject("repository").getString("clone_url"); // web addres for cloning 
                     System.out.println("Incoming push on ref: " + ref);
 
                     // 3. check branch
                     if ("refs/heads/assessment".equals(ref)) {
                         System.out.println("Assessment branch detected! Triggering CI process...");
-                        // TODO: mvn compile
+
                         response.setStatus(HttpServletResponse.SC_OK);
                         writer.println("CI started for assessment branch.");
+                    
+        
+                    // trigger the actual CI !!!
+                    CIrunner.triggerCI(cloneURL, ref, sha);
+
                     } else {
                         System.out.println("Not an assessment branch. Ignore.");
                         response.setStatus(HttpServletResponse.SC_OK);
@@ -74,12 +83,6 @@ public class ContinuousIntegrationServer extends AbstractHandler {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             writer.println("404 Not Found");
         }
-
-        // TODO: plug in CI logic here:
-        // 1. Parse webhook payload (repo/branch/SHA)
-        // 2. Clone or update repository
-        // 3. Run build/tests
-        // 4. Report status back to GitHub
     }
 
         /**
