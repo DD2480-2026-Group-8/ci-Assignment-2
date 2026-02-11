@@ -12,7 +12,6 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.json.JSONObject;
 
-
 /**
  * ContinuousIntegrationServer acts as a simple webhook endpoint.
  * For now it just responds with a basic message; later you'll plug in
