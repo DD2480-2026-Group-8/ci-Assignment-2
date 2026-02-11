@@ -15,23 +15,12 @@ public class BuildHistoryManagerTest {
     Path tempDir;  // JUnit creates and cleans this automatically
 
     private BuildHistoryManager manager;
-    private String originalHomeDir;
-
 
     @BeforeEach
     public void setUp() {
-        originalHomeDir = System.getProperty("user.home");
-        
-        System.setProperty("user.home", tempDir.toString());
-        manager = new BuildHistoryManager();
-}
+        manager = new BuildHistoryManager(tempDir.toString());
+    }
 
-    
-@AfterEach
-public void tearDown() {
-    // Restore original home directory
-    System.setProperty("user.home", originalHomeDir);
-}
 @Test
     public void testEmptyBuildList() {
         String buildList = manager.getBuildList();

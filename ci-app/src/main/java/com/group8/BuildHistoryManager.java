@@ -12,14 +12,16 @@ import java.util.Arrays;
  * Manages the persistence and retrieval of build history
  */
 public class BuildHistoryManager {
-    private static final String HISTORY_DIR =
-            System.getProperty("user.home") + "/ci-build-history";
+    private final File historyDir;
 
     public BuildHistoryManager() {
-        // make sure that dir exists
-        File dir = new File(HISTORY_DIR);
-        if (!dir.exists()) {
-            dir.mkdirs();
+        this(System.getProperty("user.home") + "/ci-build-history");
+    }
+
+    public BuildHistoryManager(String directoryPath) {
+        this.historyDir = new File(directoryPath);
+        if (!this.historyDir.exists()) {
+            this.historyDir.mkdirs();
         }
     }
 
@@ -31,7 +33,7 @@ public class BuildHistoryManager {
         JSONObject json = record.toJSONObject();
 
         // format: build_id.json
-        File file = new File(HISTORY_DIR, "build_" + record.timestamp() + ".json");
+        File file = new File(this.historyDir, "build_" + record.timestamp() + ".json");
 
         try (FileWriter writer = new FileWriter(file)) {
             writer.write(json.toString());
@@ -45,12 +47,13 @@ public class BuildHistoryManager {
      *
      */
     public String getBuildList() {
-        File folder = new File(HISTORY_DIR);
-        File[] files = folder.listFiles();
+        File folder = this.historyDir;
+        File[] files = folder.listFiles((dir, name) ->
+                name.startsWith("build_") && name.endsWith(".json")
+        );
         if (files == null || files.length == 0) {
             return "No builds found.";
         }
-
         Arrays.sort(files, (f1, f2) -> {
             long id1 = Long.parseLong(
                     f1.getName().substring(6, f1.getName().length() - 5)
@@ -67,7 +70,7 @@ public class BuildHistoryManager {
             String buildId = filename.substring(0, filename.length() - 5);
 
             sb.append("<a href=\"/build/")
-                    .append(buildId, 6, filename.length() - 5)
+                    .append(buildId, 6, buildId.length())
                     .append("\">")
                     .append(buildId)
                     .append("</a><br>");
@@ -80,7 +83,7 @@ public class BuildHistoryManager {
      * @param id build identifier (timestamp part of the filename)
      */
     public String getBuildDetail(String id) {
-        File f = new File(HISTORY_DIR, "build_" + id + ".json");
+        File f = new File(this.historyDir, "build_" + id + ".json");
         if (!f.exists()) {
             return "<p>Error: Build " + id + " not found.</p>";
         }
