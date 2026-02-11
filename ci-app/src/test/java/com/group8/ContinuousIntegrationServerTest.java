@@ -127,6 +127,7 @@ class ContinuousIntegrationServerTest {
                 () -> "Expected 404 response but got: " + responseWriter);
     }
 
+
     @Test
     void testMalformedJsonReturns400() throws Exception {
         when(request.getMethod()).thenReturn("POST");
