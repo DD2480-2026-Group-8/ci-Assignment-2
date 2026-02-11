@@ -15,6 +15,7 @@ class StatusToGithubTest {
     /**
      * Test that setCommitStatus returns true for successful status code 201.
      */
+
     @Test
     void testSetCommitStatusReturnsTrueFor201() throws Exception {
         HttpClientWrapper testWrapper = new HttpClientWrapper() {
