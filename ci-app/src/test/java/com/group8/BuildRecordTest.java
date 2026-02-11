@@ -13,7 +13,7 @@ public class BuildRecordTest {
     @Test
     public void testToJSONObject() {
         String commit = "000111";
-        String status = "SUCCESS";
+        String status = "FAILURE";
         long timestamp = System.currentTimeMillis();
         String log = "log";
 
