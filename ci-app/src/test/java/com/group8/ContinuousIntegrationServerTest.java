@@ -114,6 +114,7 @@ class ContinuousIntegrationServerTest {
                 () -> "Expected non-assessment branch to be ignored, but got: " + responseWriter);
     }
 
+
     // CI tests:
     void testInvalidPathReturns404() throws Exception {
         when(request.getMethod()).thenReturn("GET");
