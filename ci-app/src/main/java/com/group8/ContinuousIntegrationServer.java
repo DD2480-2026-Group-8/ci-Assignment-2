@@ -12,6 +12,11 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.json.JSONObject;
 
+/**
+ * ContinuousIntegrationServer acts as a simple webhook endpoint.
+ * For now it just responds with a basic message; later you'll plug in
+ * cloning, building, testing, and GitHub status updates here.
+ */
 public class ContinuousIntegrationServer extends AbstractHandler {
 
     /**
@@ -23,6 +28,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
         CIrunner.triggerCI(cloneURL, ref, sha);
     }
 
+    private final BuildHistoryManager historyManager = new BuildHistoryManager();
     @Override
     public void handle(
             String target,
@@ -30,7 +36,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
             HttpServletRequest request,
             HttpServletResponse response) throws IOException, ServletException {
 
-        response.setContentType("text/plain;charset=utf-8");
+        response.setContentType("text/html;charset=utf-8");
         if (baseRequest != null) {
             baseRequest.setHandled(true);
         }
@@ -41,10 +47,21 @@ public class ContinuousIntegrationServer extends AbstractHandler {
         System.out.printf("Received %s %s%n", method, path);
 
         try (PrintWriter writer = response.getWriter()) {
-            if ("GET".equalsIgnoreCase(method) && "/".equals(path)) {
-                response.setStatus(HttpServletResponse.SC_OK);
-                writer.println("CI Server is up and running");
-                return;
+            if ("GET".equalsIgnoreCase(method)) {
+                if ("/".equals(path)) {
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    writer.println(
+                            "CI Server is up and running. Go to <a href=\"/builds\">/builds</a> to see the build history."
+                    );
+                    return;
+                } else if ("/builds".equals(path)) {
+                    writer.println(historyManager.getBuildList());
+                    return;
+                }else if (path.startsWith("/build/")) {
+                    String buildId = path.substring(7);
+                    writer.println(historyManager.getBuildDetail(buildId));
+                    return;
+                }
             }
             if ("POST".equalsIgnoreCase(method) && "/webhook".equals(path)) {
                 try {
@@ -58,8 +75,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
                     String sha = payload.optString("after", "");
                     // 3. clone URL
 
-                    String cloneURL = payload.getJSONObject("repository").getString("clone_url"); // web addres for
-                                                                                                  // cloning
+                    String cloneURL = payload.getJSONObject("repository").getString("clone_url"); // web addres for cloning
                     System.out.println("Incoming push on ref: " + ref);
 
                     // 3. check branch (run CI for assessment and main)
@@ -70,7 +86,8 @@ public class ContinuousIntegrationServer extends AbstractHandler {
                         writer.println("CI started for " + ref + ".");
 
                         // trigger the actual CI !!!
-                        triggerCI(cloneURL, ref, sha);
+                        BuildRecord record = CIrunner.triggerCI(cloneURL, ref, sha);
+                        historyManager.saveBuild(record);
                     } else {
                         System.out.println("Not an assessment/main branch. Ignore.");
                         response.setStatus(HttpServletResponse.SC_OK);
