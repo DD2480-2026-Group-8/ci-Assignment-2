@@ -36,7 +36,8 @@ class ContinuousIntegrationServerTest {
     }
 
     /**
-     * Test that the server responds with 200 OK and a friendly message on the root path.
+     * Test that the server responds with 200 OK and a friendly message on the root
+     * path.
      */
     @Test
     void testHandleIndex() throws Exception {
@@ -73,14 +74,14 @@ class ContinuousIntegrationServerTest {
             return new String(is.readAllBytes());
         }
     }
+
     @Test
     void testAssessmentBranchTriggersCI() throws Exception {
         String payload = loadResource("webhook/push-assessment.json");
 
         when(request.getMethod()).thenReturn("POST");
         when(request.getReader()).thenReturn(
-                new java.io.BufferedReader(new java.io.StringReader(payload))
-        );
+                new java.io.BufferedReader(new java.io.StringReader(payload)));
         when(request.getRequestURI()).thenReturn("/webhook");
 
         ciServer.handle("/", null, request, response);
@@ -89,8 +90,28 @@ class ContinuousIntegrationServerTest {
 
         assertTrue(
                 responseWriter.toString().toLowerCase().contains("assessment"),
-                () -> "Expected assessment branch handling, but got: " + responseWriter
-        );
+                () -> "Expected assessment branch handling, but got: " + responseWriter);
+    }
+
+    @Test
+    void testMainBranchTriggersCI() throws Exception {
+        // Reuse assessment payload but change ref to main
+        String payload = loadResource("webhook/push-assessment.json")
+                .replace("refs/heads/assessment", "refs/heads/main");
+
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getReader()).thenReturn(
+                new java.io.BufferedReader(new java.io.StringReader(payload)));
+        when(request.getRequestURI()).thenReturn("/webhook");
+
+        ciServer.handle("/", null, request, response);
+
+        verify(response).setStatus(HttpServletResponse.SC_OK);
+
+        assertTrue(
+                responseWriter.toString().toLowerCase().contains("refs/heads/main")
+                        || responseWriter.toString().toLowerCase().contains("ci started for"),
+                () -> "Expected main branch handling, but got: " + responseWriter);
     }
 
     @Test
@@ -99,8 +120,7 @@ class ContinuousIntegrationServerTest {
 
         when(request.getMethod()).thenReturn("POST");
         when(request.getReader()).thenReturn(
-                new java.io.BufferedReader(new java.io.StringReader(payload))
-        );
+                new java.io.BufferedReader(new java.io.StringReader(payload)));
         when(request.getRequestURI()).thenReturn("/webhook");
 
         ciServer.handle("/", null, request, response);
@@ -110,17 +130,9 @@ class ContinuousIntegrationServerTest {
         assertTrue(
                 responseWriter.toString().toLowerCase().contains("ignore")
                         || responseWriter.toString().toLowerCase().contains("not assessment"),
-                () -> "Expected non-assessment branch to be ignored, but got: " + responseWriter
-        );
+                () -> "Expected non-assessment branch to be ignored, but got: " + responseWriter);
     }
 
-
-
-
-
-
-
-    
     // CI tests:
     void testInvalidPathReturns404() throws Exception {
         when(request.getMethod()).thenReturn("GET");
@@ -130,11 +142,9 @@ class ContinuousIntegrationServerTest {
 
         verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);
         assertTrue(
-            responseWriter.toString().contains("404"),
-            () -> "Expected 404 response but got: " + responseWriter
-        );
+                responseWriter.toString().contains("404"),
+                () -> "Expected 404 response but got: " + responseWriter);
     }
-
 
     @Test
     void testMalformedJsonReturns400() throws Exception {
@@ -150,11 +160,4 @@ class ContinuousIntegrationServerTest {
         verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
     }
 
-
-
-
-
-
-
 }
-

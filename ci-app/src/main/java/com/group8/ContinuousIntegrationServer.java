@@ -19,8 +19,6 @@ import org.json.JSONObject;
  */
 public class ContinuousIntegrationServer extends AbstractHandler {
 
-    private final BuildHistoryManager historyManager = new BuildHistoryManager();
-
     @Override
     public void handle(
             String target,
@@ -70,20 +68,19 @@ public class ContinuousIntegrationServer extends AbstractHandler {
                     String cloneURL = payload.getJSONObject("repository").getString("clone_url"); // web addres for cloning
                     System.out.println("Incoming push on ref: " + ref);
 
-                    // 3. check branch
-                    if ("refs/heads/assessment".equals(ref)) {
-                        System.out.println("Assessment branch detected! Triggering CI process...");
+                    // 3. check branch (run CI for assessment and main)
+                    if ("refs/heads/assessment".equals(ref) || "refs/heads/main".equals(ref)) {
+                        System.out.println("Assessment or main branch detected! Triggering CI process...");
 
                         response.setStatus(HttpServletResponse.SC_OK);
-                        writer.println("CI started for assessment branch.");
+                        writer.println("CI started for " + ref + ".");
 
                         // trigger the actual CI !!!
                         CIrunner.triggerCI(cloneURL, ref, sha);
-
                     } else {
-                        System.out.println("Not an assessment branch. Ignore.");
+                        System.out.println("Not an assessment/main branch. Ignore.");
                         response.setStatus(HttpServletResponse.SC_OK);
-                        writer.println("Not assessment branch, nothing to do.");
+                        writer.println("Not assessment/main branch, nothing to do.");
                     }
                 } catch (Exception e) {
                     System.err.println("Failed to process webhook: " + e.getMessage());
@@ -97,16 +94,16 @@ public class ContinuousIntegrationServer extends AbstractHandler {
         }
     }
 
-        /**
-         * Starts the CI server on port 8080.
-         */
-        public static void main(String[] args) throws Exception {
-                int port = 8080;
-                Server server = new Server(port);
-                server.setHandler(new ContinuousIntegrationServer());
+    /**
+     * Starts the CI server on port 8080.
+     */
+    public static void main(String[] args) throws Exception {
+        int port = 8080;
+        Server server = new Server(port);
+        server.setHandler(new ContinuousIntegrationServer());
 
-                System.out.println("ContinuousIntegrationServer starting on http://localhost:" + port);
-                server.start();
-                server.join();
-        }
+        System.out.println("ContinuousIntegrationServer starting on http://localhost:" + port);
+        server.start();
+        server.join();
+    }
 }
