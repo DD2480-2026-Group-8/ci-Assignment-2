@@ -88,6 +88,8 @@ public class CIrunner {
 
             File testDir = new File(cloneDir, "repo");
 
+            // checkout to the commit branch
+            runner(List.of("git", "checkout", sha), testDir);
             // that can work for many operating systems
             String mvn = System.getProperty("os.name").toLowerCase().contains("win")
                     ? "mvn.cmd"
