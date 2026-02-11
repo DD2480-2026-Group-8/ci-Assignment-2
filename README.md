@@ -100,3 +100,15 @@ The generated HTML documentation will be available under `ci-app/target/site/api
 ### Team SEMAT reflection (P6)
 
 _To be completed by the team:_ a short paragraph assessing the current Team state according to the Essence standard (p.51–52), describing:
+
+**Current State:**
+Collaborating
+**Why:**
+- The communcation is open and honest - we have regular check-ins and syncs on discord and in person and ask for code reviews consistently;
+- The team is focused on achieving the team mission - we are all commited to doing our part when it comes to the assignments; 
+- The team members know and trust each other - we divide the work and trust each other to complete it or ask for help if and when is necessary; the trust has not been breached
+**Obstacles to next state**
+While we each team members meets their commitments eventually, it sometimes takes longer than was communicated causing delay in the workflow.
+
+While we work quite efficiently, the active effort for continuous identification of potential waste of work is not there. It is not our regular practice to identify and eliminate these gaps. 
+
