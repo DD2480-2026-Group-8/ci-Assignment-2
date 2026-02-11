@@ -12,7 +12,6 @@ class StatusToGithubTest {
 
     private static final String TEST_OWNER = "test-owner";
     private static final String TEST_REPO = "test-repo";
-
     /**
      * Test that setCommitStatus returns true for successful status code 201.
      */
