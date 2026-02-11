@@ -10,6 +10,11 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
+    # Make the GitHub token available to tests/integration code that
+    # reads GH_TOKEN from the environment (e.g. StatusToGithub, CIrunner).
+    env:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
     steps:
       - uses: actions/checkout@v4
 
