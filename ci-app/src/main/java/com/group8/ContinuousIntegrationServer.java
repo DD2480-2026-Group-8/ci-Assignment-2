@@ -19,6 +19,15 @@ import org.json.JSONObject;
  */
 public class ContinuousIntegrationServer extends AbstractHandler {
 
+    /**
+     * Hook for triggering the CI pipeline. In production this delegates to
+     * {@link CIrunner}, but tests can override this method (in a subclass) to
+     * avoid spawning external Maven processes.
+     */
+    protected void triggerCI(String cloneURL, String ref, String sha) {
+        CIrunner.triggerCI(cloneURL, ref, sha);
+    }
+
     private final BuildHistoryManager historyManager = new BuildHistoryManager();
     @Override
     public void handle(
