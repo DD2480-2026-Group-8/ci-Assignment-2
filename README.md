@@ -77,13 +77,13 @@ Implementation details and tests for these steps are found under `ci-app/src/mai
 
 ## Statement of Contributions
 
-| Team Member        | Contributions |
-| ------------------ | ------------- |
-| Filip Dimitrijevic |               |
-| Anna Likhanova     |               |
-| Jingze Guo         |               |
-| Erik Sirborg       |               |
-| Louisa Zhang       |               |
+| Team Member        | Contributions              |
+| ------------------ | -------------------------- |
+| Filip Dimitrijevic | Docker setup, code review. |
+| Anna Likhanova     |                            |
+| Jingze Guo         |                            |
+| Erik Sirborg       |                            |
+| Louisa Zhang       |                            |
 
 ### Documentation (P5)
 
