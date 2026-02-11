@@ -10,6 +10,11 @@ services:
       - "8080:8080"
     environment:
       - JAVA_OPTS=-Xmx512m -Xms256m
+      # Personal access token used by StatusToGithub inside the container.
+      # Set it in your shell before running docker compose:
+      #   export GH_TOKEN=ghp_xxx
+      # so docker-compose can forward it into the container.
+      - GH_TOKEN=${GH_TOKEN}
     restart: unless-stopped
     networks:
       - ci-network
