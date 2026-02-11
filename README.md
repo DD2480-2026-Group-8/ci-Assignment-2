@@ -99,8 +99,6 @@ The generated HTML documentation will be available under `ci-app/target/site/api
 
 ### Team SEMAT reflection (P6)
 
-_To be completed by the team:_ a short paragraph assessing the current Team state according to the Essence standard (p.51–52), describing:
-
 **Current State:**
 Collaborating
 **Why:**
@@ -108,7 +106,7 @@ Collaborating
 - The team is focused on achieving the team mission - we are all commited to doing our part when it comes to the assignments; 
 - The team members know and trust each other - we divide the work and trust each other to complete it or ask for help if and when is necessary; the trust has not been breached
 **Obstacles to next state**
-While we each team members meets their commitments eventually, it sometimes takes longer than was communicated causing delay in the workflow.
+While we each team members meets their commitments eventually, it sometimes takes longer than was communicated, causing delays in the workflow. To move to the next state the team needs to clearly communicate personal deadlines and stick to them, or inform of the inablity to do so in advance.
 
-While we work quite efficiently, the active effort for continuous identification of potential waste of work is not there. It is not our regular practice to identify and eliminate these gaps. 
+While the team works quite efficiently, there is currently no active efforts to continiously identify potential waste of work. To move to the next state the team needs to identify and eliminate potential waste of work through regular, designated check-ins.
 
