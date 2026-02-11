@@ -28,4 +28,5 @@ public record BuildRecord(String commit, String status, long timestamp, String l
         json.put("log", this.log);
         return json;
     }
+
 }
