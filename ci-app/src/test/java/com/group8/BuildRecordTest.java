@@ -21,9 +21,9 @@ public class BuildRecordTest {
         JSONObject json = buildRecord.toJSONObject();
 
         assertEquals(commit, json.getString("commit"));
-        assertEquals(status, json.getString("status"));
+        // assertEquals(status, json.getString("status"));
         // make it wrong
-        //assertEquals(status, "FAILURE");
+        assertEquals(status, "FAILURE");
 
         String expectedDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(timestamp));
         assertEquals(expectedDate, json.getString("date"));
