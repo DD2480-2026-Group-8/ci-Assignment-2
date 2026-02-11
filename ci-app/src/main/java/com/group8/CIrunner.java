@@ -10,6 +10,8 @@ public class CIrunner {
     public static int runner(List<String> cmd, File dir) throws IOException, InterruptedException {
         ProcessBuilder pb = new ProcessBuilder(cmd);
         pb.directory(dir);
+
+        pb.inheritIO();
         Process p = pb.start();
         return p.waitFor(); // 0 --> success (all test pass!), not-zero --> failure (at least one test has
                             // failed!)
