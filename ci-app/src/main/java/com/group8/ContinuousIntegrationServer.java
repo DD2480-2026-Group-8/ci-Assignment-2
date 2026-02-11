@@ -19,6 +19,7 @@ import org.json.JSONObject;
  */
 public class ContinuousIntegrationServer extends AbstractHandler {
 
+    private final BuildHistoryManager historyManager = new BuildHistoryManager();
     @Override
     public void handle(
             String target,
@@ -76,7 +77,8 @@ public class ContinuousIntegrationServer extends AbstractHandler {
                         writer.println("CI started for " + ref + ".");
 
                         // trigger the actual CI !!!
-                        CIrunner.triggerCI(cloneURL, ref, sha);
+                        BuildRecord record = CIrunner.triggerCI(cloneURL, ref, sha);
+                        historyManager.saveBuild(record);
                     } else {
                         System.out.println("Not an assessment/main branch. Ignore.");
                         response.setStatus(HttpServletResponse.SC_OK);
