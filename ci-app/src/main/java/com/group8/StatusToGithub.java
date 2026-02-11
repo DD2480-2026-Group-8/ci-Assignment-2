@@ -95,6 +95,8 @@ public class StatusToGithub {
             JSONObject obj = new JSONObject();
             obj.put("state", state);
             String jsonString = obj.toString();
+            obj.put("context", "CI Server (Group 8)");
+            obj.put("description", state.equals("success") ? "Build and tests passed" : "Build or tests failed");
 
             HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).header("accept", "application/json")
                     .header("authorization", "bearer " + token)
