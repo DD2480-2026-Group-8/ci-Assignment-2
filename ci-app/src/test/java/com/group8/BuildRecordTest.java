@@ -26,6 +26,7 @@ public class BuildRecordTest {
         // make it wrong
         assertEquals(status, "FAILURE");
 
+
         String expectedDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(timestamp));
         assertEquals(expectedDate, json.getString("date"));
 
